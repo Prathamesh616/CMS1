@@ -1,0 +1,44 @@
+$(document).ready(function() {
+    // Initialize DataTable
+    new DataTable('#example');
+
+    // Set image src for modal
+    $('#coverImageModal').on('show.bs.modal', function (event) {
+        var modal = $(this);
+        modal.find('#modal-image').attr('src', 'images/logo3.png'); // Set the image source for the modal
+    });
+
+    // Pass the ID to the delete modal
+    $('#deleteModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var id = button.data('id'); // Extract info from data-* attributes
+        var confirmDelete = $('#confirmDelete'); // Delete button inside the modal
+        confirmDelete.attr('href', 'posts_delete.php?sirb_id=' + id); // Set the href attribute
+    });
+
+    // Show toast notification based on URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+    if (message) {
+        const toast = $('#toast');
+        $('#toast-message').text(message);
+
+        // Set toast type based on message content
+        if (message.includes('added') || message.includes('updated') || message.includes('deleted')) {
+            toast.addClass('show success');
+        } else if (message.includes('failed')) {
+            toast.addClass('show error');
+        } else {
+            toast.addClass('show warning');
+        }
+
+        // Remove toast class after animation
+        setTimeout(() => {
+            toast.removeClass('show success error warning');
+        }, 3000);
+
+        // Remove the message parameter from the URL
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+});
